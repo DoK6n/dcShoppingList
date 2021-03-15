@@ -16,31 +16,41 @@ const appendItem = (el, text) => {
   el.append(div);
 };
 
-window.addEventListener("load", () => {
-  const useState = state.getInstance();
+const createItem = (useState, count) => {
+  useState.add();
+  const getNextId = useState.getNextId();
+  const text = inputText.value;
+  appendItem(list, text, getNextId);
+  inputText.value = "";
+  count.innerHTML = "  " + useState.getId() + "개";
+};
 
-  const count = document.createElement("span");
+const createCount = (count, useState) => {
   count.className = "count";
   count.innerHTML = "" + useState.getId() + "개";
   header.append(count);
+};
+
+const removeItem = (item, useState, count) => {
+  useState.remove();
+  item.remove();
+  count.innerHTML = "" + useState.getId() + "개";
+};
+
+window.addEventListener("load", () => {
+  const useState = state.getInstance();
+  const count = document.createElement("span");
+
+  createCount(count, useState);
 
   addItem.addEventListener("click", () => {
     if (inputText.value !== "") {
-      useState.add();
-      const getNextId = useState.getNextId();
-      const text = inputText.value;
-      appendItem(list, text, getNextId);
-      inputText.value = "";
-      count.innerHTML = "  " + useState.getId() + "개";
+      createItem(useState, count);
     }
   });
-
   list.addEventListener("click", (e) => {
     if (e.target.classList[2] === "del") {
-      // console.log(e.target.parentNode.id, e.target.parentNode.innerText);
-      useState.remove();
-      e.target.parentNode.remove();
-      count.innerHTML = "" + useState.getId() + "개";
+      removeItem(e.target.parentNode, useState, count);
     }
   });
 });
